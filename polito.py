@@ -1,6 +1,8 @@
 from scraper import Scraper
 from lib import *
 
+# time format 'YYYY-MM-DDTHH:MM:SS+01:00'
+
 class Polito(Scraper):
     material_urls = {
         'sap': 'https://didattica.polito.it/portal/pls/portal/sviluppo.pagina_corso.main?t=3&p_sottopagina=VC_6718',
@@ -10,6 +12,7 @@ class Polito(Scraper):
     }
     
     def __init__(self, parameter_list):
+        Scraper.__init__(self)
         self.polito_login()
         pass
 
