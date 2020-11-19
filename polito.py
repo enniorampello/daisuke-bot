@@ -1,7 +1,6 @@
 from scraper import Scraper
 from lib import *
 
-# time format 'YYYY-MM-DDTHH:MM:SS+01:00'
 
 class Polito(Scraper):
     material_urls = {
@@ -16,7 +15,7 @@ class Polito(Scraper):
         self.polito_login()
         pass
 
-    def polito_login(self):
+    def login(self):
         self.driver.get('https://idp.polito.it/idp/x509mixed-login')
         self.wait.until(presence_of_element_located((By.ID, 'j_username')))
         self.driver.find_element_by_id('j_username').send_keys(get_username())
