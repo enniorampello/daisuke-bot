@@ -1,5 +1,5 @@
 from __future__ import print_function
-import datetime
+from date_format import tomorrow
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -18,6 +18,7 @@ class Calendar:
         if os.path.exists('token.pickle'):
             with open('token.pickle', 'rb') as token:
                 creds = pickle.load(token)
+
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -29,8 +30,21 @@ class Calendar:
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
-
+        
         self.service = build('calendar', 'v3', credentials=creds)
 
     def check(self):
-        pass
+        events_result = self.service.events().list(calendarId='primary', timeMin=tomorrow(),
+                                        maxResults=10, singleEvents=True,
+                                        orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            print('No upcoming events found.')
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start, event['summary'])
+
+if __name__ == '__main__':
+    calendar = Calendar()
+    calendar.check()
