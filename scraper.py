@@ -11,4 +11,3 @@ class Scraper:
     def refresh(self):
         self.driver.refresh()
         sleep(5)
-        pass

@@ -28,6 +28,3 @@ class Polito(Scraper):
 
     def run():
         pass
-
-    
-
