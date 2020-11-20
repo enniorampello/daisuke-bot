@@ -1,7 +1,8 @@
 from __future__ import print_function
-from date_format import tomorrow
+from date_format import tomorrow, duration
 import pickle
 import os.path
+import globals
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -35,15 +36,16 @@ class Calendar:
 
     def check(self):
         events_result = self.service.events().list(calendarId='primary', timeMin=tomorrow(),
-                                        maxResults=10, singleEvents=True,
+                                        timeMax=tomorrow(add_days=1), singleEvents=True,
                                         orderBy='startTime').execute()
         events = events_result.get('items', [])
 
-        if not events:
-            print('No upcoming events found.')
         for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start, event['summary'])
+            if event['summary'] in globals.material_urls.keys():
+                globals.lectures.append((event['summary'],duration(event),event['colorId']))
+
+    def run():
+        pass
 
 if __name__ == '__main__':
     calendar = Calendar()
