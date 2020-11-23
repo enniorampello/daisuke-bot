@@ -1,3 +1,4 @@
+from datetime import timedelta
 from date_format import get_schedule
 from scraper import Scraper
 from lib import *
@@ -34,7 +35,7 @@ class Polito(Scraper):
         self.driver.find_element_by_xpath(subject_paths.get(sub)).click()
         sleep(2)
         self.driver.find_element_by_xpath('/html/body/nav/div[2]/ul[2]/li[5]/a').click()
-        sleep(2)
+        sleep(3)
         if sub == 'estm':
             self.get_estm_vc()
         elif sub == 'sap':
@@ -50,12 +51,12 @@ class Polito(Scraper):
 
     def get_estm_vc(self):
         self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div/ul/li[2]/a/span').click()
-        sleep(1)
+        sleep(2)
         self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div/div[3]/div[2]/div[2]/div/div[2]/angular-filemanager/div/div[2]/div/div[1]/ul/li/ul/li[2]/a').click()
     
     def get_sap_vc(self):
         self.driver.find_element_by_xpath('//*[@id="portlet_corso_container"]/div[1]/div/ul/li[2]/a/span').click()
-        sleep(1)
+        sleep(3)
         self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div/div[3]/div[2]/div[2]/div/div[2]/angular-filemanager/div/div[2]/div/div[1]/ul/li/ul/li/a').click()
     
     def get_cn_vc(self):
@@ -66,18 +67,23 @@ class Polito(Scraper):
             return
         lectures = get_schedule()
         for sub in lectures.index:
-            print('sub: ' + sub)
             vals = lectures.loc[sub]
             self.get_vc_page(sub)
             i = 1
+            found = 0
             while True:
-                print('reading...')
                 try:
                     lesson_date = self.driver.find_element_by_xpath(f'/html/body/div[6]/div/div/div[3]/div/div[1]/div[1]/nav/div/div[2]/div/ul/li[{i}]/span').text
-                    print(lesson_date)
+                    if (datetime.today() - timedelta(days=vals[0]-1)).strftime(f'%d/%m/%Y') in lesson_date:
+                        found += 1
+                        if found == vals[1]:
+                            print(sub + ': damn! tomorrow you gotta watch all the lessons.')
+                            break
                     i += 1
                 except NoSuchElementException:
                     break
+            if found < vals[1]:
+                print(sub + f': great! you just need to watch {found} lesson(s) tomorrow.')
             self.driver.get('https://didattica.polito.it/pls/portal30/sviluppo.pagina_studente_2016.main') #portale main page
             sleep(4) #replace with wait
 
