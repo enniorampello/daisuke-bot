@@ -1,4 +1,8 @@
 from datetime import datetime, timedelta, tzinfo, date
+from logging import error
+
+from numpy.core.numeric import NaN
+from globals import schedule
 
 format = f'%Y-%m-%dT%H:%M:%S+01:00'
 
@@ -14,3 +18,11 @@ def duration(event) -> int:
     datetime_end = datetime.strptime(event['end'].get('dateTime'), format)
     datetime_start = datetime.strptime(event['start'].get('dateTime'), format)
     return int((datetime_end - datetime_start).total_seconds() / 60)
+
+def get_schedule():
+    day = datetime.strptime(tomorrow(), format).weekday()
+    if day < 6:
+        return schedule.iloc[day].dropna()
+    else:
+        # Error
+        return 1

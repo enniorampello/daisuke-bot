@@ -4,7 +4,7 @@ class Scraper:
 
     def __init__(self):
         self.options = ChromeOptions()
-        self.options.add_argument('--headless')
+        #self.options.add_argument('--headless')
         self.driver = Chrome(get_chromedriver_path(), options=self.options)
         self.wait = WebDriverWait(self.driver, 20)
     

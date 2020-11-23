@@ -54,11 +54,15 @@ class Calendar:
         events = events_result.get('items', [])
 
         for event in events:
-            if event['summary'] in globals.material_urls.keys():
+            if event['summary'] in globals.subject_paths.keys():
                 globals.lectures.append((event['summary'],duration(event),event['colorId']))
 
-    def run():
-        pass
+    def run(self):
+        try:
+            self.check()
+        except:
+            self.__init__()
+            self.check()
 
 if __name__ == '__main__':
     calendar = Calendar()
